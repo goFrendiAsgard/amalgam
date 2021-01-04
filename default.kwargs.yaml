@@ -1,3 +1,5 @@
 defaultBranch: master
 subrepo::fibo::prefix: fibo
 subrepo::fibo::url: https://github.com/state-alchemists/fibonacci-clock
+link::myservice/transport: shared-libs/python/transport
+link::myservice/database: shared-libs/python/database

@@ -14,13 +14,11 @@ In this tutorial, we will explore how Zaruba might help you to:
 
 ## Install go and git
 
+Installing Zaruba is basically cloning it's repository and perform compilation.  In order to do that, you need `git` and `golang` to be installed in your computer.
+
 ```sh
 sudo apt-get install git golang
 ```
-
-Installing Zaruba is basically cloning it's repository and perform compilation. 
-
-In order to do that, you need `git` and `golang`.
 
 ## Install Zaruba
 
@@ -28,21 +26,29 @@ In order to do that, you need `git` and `golang`.
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/state-alchemists/zaruba/master/install.sh)"
 ```
 
-The installation script will clone zaruba's repository to your `~/.zaruba` and perform compilation. 
+The installation script will clone zaruba's repository to your `~/.zaruba` and perform compilation.  It will also try to create symlink to `/usr/bin/zaruba` (that's why it needs root access).
 
-The installation script will also try to create symlink to `/usr/bin/zaruba`.
+You are encouraged to have a look at [the installation script](https://raw.githubusercontent.com/state-alchemists/zaruba/master/install.sh) in order to know see what really going on.
 
-You are encouraged to see [the installation script](https://raw.githubusercontent.com/state-alchemists/zaruba/master/install.sh) to see what really going on.
+## Update Zaruba
+
+This tutorial was tested by using `zaruba v0.1.0`. To show your current zaruba version, you can invoke `zaruba please showVersion`
+
+```sh
+zaruba please update
+```
 
 ## Getting your machine ready
+
+Currently zaruba only support ubuntu, for other operating system, you can install: `docker`, `python`, `pipenv`, and `netcat`.
 
 ```sh
 sudo -E zaruba please setupUbuntu
 ```
 
-Currently zaruba only support ubuntu, for other operating system, you can install: `docker`, `python`, `pipenv`, and `netcat`.
-
 ## Rock on
+
+Now let's try to run the commands.
 
 ```sh
 mkdir amalgam
@@ -73,7 +79,6 @@ zaruba please makeDockerTask image=rabbitmq
 
 # Create Service Task
 zaruba please makeServiceTask location=fibo
-zaruba please makeServiceTask location=myservice
 
 # Run services
 zaruba please run
@@ -86,3 +91,9 @@ zaruba please removeContainer
 ```
 
 Now you should have `rabbitmq`, `fibo`, and `myservice` running. All at once, just like [the three prime evils](https://diablo.fandom.com/wiki/Prime_Evil#The_Three_Brothers).
+
+![Zaruba in action](amalgam-run.png)
+
+This repo contains all generated tasks, so you can have a look and see what's going on.
+
+> TODO: provide explanation for every command

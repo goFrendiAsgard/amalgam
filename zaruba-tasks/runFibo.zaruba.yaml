@@ -1,0 +1,69 @@
+tasks:
+
+  runFibo:
+    icon: 📜
+    description: Run fibo
+    extend: serveHttp
+    location: ../fibo
+    env: &fiboEnv
+      HTTP_PORT:
+        from: FIBO_HTTP_PORT
+        default: 8080
+    lconfig:
+      ports: &fiboPorts
+      - '{{ .GetEnv "HTTP_PORT" }}'
+    config: {}
+
+  #######################################
+  ## 🐳🐳🐳 Containerization tasks
+  #######################################
+
+
+  runFiboContainer:
+    icon: 🐳
+    description: Run fibo (containerized)
+    extend: core.startDockerContainer
+    dependencies:
+    - buildFiboImage
+    timeout: 1h
+    env:
+      <<: *fiboEnv
+    lconfig:
+      ports: *fiboPorts
+    config:
+      localhost: host.docker.internal
+      expose: lconfig.ports
+      imageName: local/fibo:latest
+      containerName: fibo
+      rebuild: true
+
+
+  removeFiboContainer:
+    icon: 🐳
+    description: Remove container for fibo
+    extend: core.removeDockerContainer
+    config:
+      containerName: fibo
+
+
+  buildFiboImage:
+    icon: 🐳
+    description: Build image for fibo
+    extend: core.buildDockerImage
+    location: ../fibo
+    timeout: 1h
+    config:
+      service: fibo
+
+
+  pushFiboImage:
+    icon: 🐳
+    description: Push fibo image
+    extend: core.pushDockerImage
+    location: ../fibo
+    dependencies:
+    - buildFiboImage
+    timeout: 1h
+    config:
+      service: fibo
+

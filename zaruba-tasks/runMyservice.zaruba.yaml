@@ -1,0 +1,108 @@
+tasks:
+
+  runMyservice:
+    icon: 📜
+    description: Run myservice
+    extend: core.startService
+    location: ../myservice
+    dependencies:
+    - prepareMyservice
+    env: &myserviceEnv
+      HTTP_PORT:
+        from: MYSERVICE_HTTP_PORT
+        default: 8080
+      MYSERVICE_HTTP_PORT:
+        from: MYSERVICE_HTTP_PORT
+        default: '3000'
+      MYSERVICE_MESSAGE_BUS_TYPE:
+        from: MYSERVICE_MESSAGE_BUS_TYPE
+        default: local
+      MYSERVICE_RABBITMQ_HOST:
+        from: MYSERVICE_RABBITMQ_HOST
+        default: localhost
+      MYSERVICE_RABBITMQ_USER:
+        from: MYSERVICE_RABBITMQ_USER
+        default: root
+      MYSERVICE_RABBITMQ_PASS:
+        from: MYSERVICE_RABBITMQ_PASS
+        default: toor
+      MYSERVICE_RABBITMQ_VHOST:
+        from: MYSERVICE_RABBITMQ_VHOST
+        default: /
+      MYSERVICE_SQLALCHEMY_DATABASE_URL:
+        from: MYSERVICE_SQLALCHEMY_DATABASE_URL
+        default: sqlite:///./database.db
+    lconfig:
+      ports: &myservicePorts
+      - '{{ if .GetEnv "MYSERVICE_HTTP_PORT" }}{{ .GetEnv "MYSERVICE_HTTP_PORT" }}{{
+        else if .GetEnv "HTTP_PORT" }}{{ .GetEnv "HTTP_PORT" }}{{ else }}3000{{ end
+        }}'
+    config:
+      start: |
+        pipenv run uvicorn main:app --reload --port={{ if .GetEnv "MYSERVICE_HTTP_PORT" }}{{ .GetEnv "MYSERVICE_HTTP_PORT" }}{{ else if .GetEnv "HTTP_PORT" }}{{ .GetEnv "HTTP_PORT" }}{{ else }}3000{{ end }}
+
+
+  prepareMyservice:
+    icon: 🐍
+    extend: core.runShellScript
+    location: ../myservice
+    timeout: 1h
+    config:
+      start: pipenv install
+    env:
+      <<: *myserviceEnv
+
+
+  #######################################
+  ## 🐳🐳🐳 Containerization tasks
+  #######################################
+
+
+  runMyserviceContainer:
+    icon: 🐳
+    description: Run myservice (containerized)
+    extend: core.startDockerContainer
+    dependencies:
+    - buildMyserviceImage
+    timeout: 1h
+    env:
+      <<: *myserviceEnv
+    lconfig:
+      ports: *myservicePorts
+    config:
+      localhost: host.docker.internal
+      expose: lconfig.ports
+      imageName: local/myservice:latest
+      containerName: myservice
+      rebuild: true
+
+
+  removeMyserviceContainer:
+    icon: 🐳
+    description: Remove container for myservice
+    extend: core.removeDockerContainer
+    config:
+      containerName: myservice
+
+
+  buildMyserviceImage:
+    icon: 🐳
+    description: Build image for myservice
+    extend: core.buildDockerImage
+    location: ../myservice
+    timeout: 1h
+    config:
+      service: myservice
+
+
+  pushMyserviceImage:
+    icon: 🐳
+    description: Push myservice image
+    extend: core.pushDockerImage
+    location: ../myservice
+    dependencies:
+    - buildMyserviceImage
+    timeout: 1h
+    config:
+      service: myservice
+

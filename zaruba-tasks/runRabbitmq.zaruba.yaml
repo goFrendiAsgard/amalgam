@@ -1,0 +1,26 @@
+tasks:
+
+  runRabbitmq:
+    icon: 🐇
+    extend: core.startDockerContainer
+    timeout: 1h
+    env:
+      RABBITMQ_DEFAULT_USER:
+        from: RABITMQ_DEFAULT_USER
+        default: root
+      RABBITMQ_DEFAULT_PASS:
+        from: RABITMQ_DEFAULT_PASS
+        default: toor
+    config:
+      imageName: rabbitmq:3-management
+      containerName: rabbitmq
+      port::5672: 5672
+      port::15672: 15672
+      afterCheck: |
+        set +e
+        docker exec "$CONTAINER_NAME" rabbitmqctl await_startup
+        until [ "$?" = "0" ]
+        do
+          docker exec "$CONTAINER_NAME" rabbitmqctl await_startup
+          sleep 3
+        done
