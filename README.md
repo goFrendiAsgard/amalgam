@@ -77,8 +77,12 @@ zaruba please makeServiceTask location=myservice
 
 # Run services
 zaruba please run
-# Or run services as container
-# zaruba please runContainer
+# Or run services as container (press ctrl + c first)
+zaruba please runContainer
+zaruba please removeContainer
+# And push our images
+# zaruba please setKwarg key=dockerRepo value=stalchmst
+# zaruba please pushImage
 ```
 
 Now you should have `rabbitmq`, `fibo`, and `myservice` running. All at once, just like [the three prime evils](https://diablo.fandom.com/wiki/Prime_Evil#The_Three_Brothers).
