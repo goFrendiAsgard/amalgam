@@ -32,7 +32,7 @@ You are encouraged to have a look at [the installation script](https://raw.githu
 
 ## Update Zaruba
 
-This tutorial was tested by using `zaruba v0.1.0`. To show your current zaruba version, you can invoke `zaruba please showVersion`
+This tutorial was tested by using `zaruba v0.2.0`. To show your current zaruba version, you can invoke `zaruba please showVersion`
 
 ```sh
 zaruba please update
@@ -44,6 +44,7 @@ Currently zaruba only support ubuntu, for other operating system, you can instal
 
 ```sh
 sudo -E zaruba please setupUbuntu
+zaruba please setup pyEnv
 ```
 
 ## Rock on
