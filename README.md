@@ -32,7 +32,7 @@ You are encouraged to have a look at [the installation script](https://raw.githu
 
 ## Update Zaruba
 
-This tutorial was tested by using `zaruba v0.2.0`. To show your current zaruba version, you can invoke `zaruba please showVersion`
+This tutorial was tested by using `zaruba v0.2.4`. To show your current zaruba version, you can invoke `zaruba please showVersion`
 
 ```sh
 zaruba please update
@@ -98,3 +98,23 @@ Now you should have `rabbitmq`, `fibo`, and `myservice` running. All at once, ju
 This repo contains all generated tasks, so you can have a look and see what's going on.
 
 > TODO: provide explanation for every command
+
+# Into Kubernetes
+
+> TODO: This is WIP
+
+```sh
+zaruba please setupKubeClient
+mkdir -p charts
+cd charts
+helm repo add bitnami https://charts.bitnami.com/bitnami
+helm pull bitnami/rabbitmq --untar
+helm pull bitnami/mysql --untar
+
+# build
+helm install -f ../chart-values/rabbitmq.yaml svc-rmq ./rabbitmq
+helm install -f ../chart-values/mysql.yaml svc-mysql ./mysql
+
+helm uninstall svc-rmq
+helm uninstall svc-mysql
+```
