@@ -32,7 +32,7 @@ You are encouraged to have a look at [the installation script](https://raw.githu
 
 ## Update Zaruba
 
-This tutorial was tested by using `zaruba v0.2.4`. To show your current zaruba version, you can invoke `zaruba please showVersion`
+This tutorial was tested by using `zaruba v0.2.6`. To show your current zaruba version, you can invoke `zaruba please showVersion`
 
 ```sh
 zaruba please update
@@ -87,7 +87,7 @@ zaruba please run
 zaruba please runContainer
 zaruba please removeContainer
 # And push our images
-# zaruba please setKwarg key=dockerRepo value=stalchmst
+# zaruba please setKwarg key=dockerRepo::default value=stalchmst
 # zaruba please pushImage
 ```
 
