@@ -32,7 +32,7 @@ You are encouraged to have a look at [the installation script](https://raw.githu
 
 ## Update Zaruba
 
-This tutorial was tested by using `zaruba v0.2.6`. To show your current zaruba version, you can invoke `zaruba please showVersion`
+This tutorial was tested by using `zaruba v0.3.0`. To show your current zaruba version, you can invoke `zaruba please showVersion`
 
 ```sh
 zaruba please update
@@ -52,13 +52,16 @@ zaruba please setup pyEnv
 Now let's try to run the commands.
 
 ```sh
-mkdir amalgam
-cd amalgam
+
+# Setup ubuntu
+sudo -E zaruba please setupUbuntu
 
 # Initiating monorepo project
+mkdir myproject
+cd myproject
 zaruba please initProject
 
-# Set and clone existing project to your monorepo
+# Import external repo
 zaruba please addSubrepo url="https://github.com/state-alchemists/fibonacci-clock" prefix="fibo"
 zaruba please initSubrepos
 zaruba please pullSubrepos
@@ -75,20 +78,41 @@ zaruba please makeFastRPCHandler location=myservice module=mymodule event=myRPC
 # Create CRUD
 zaruba please makeFastCRUD location=myservice module=mymodule entity=book fields=title,author,synopsis
 
-# Create Docker Task
-zaruba please makeDockerTask image=rabbitmq
-
 # Create Service Task
 zaruba please makeServiceTask location=fibo
 
+# Create Docker Task
+zaruba please makeDockerTask image=rabbitmq
+
 # Run services
 zaruba please run
+
 # Or run services as container (press ctrl + c first)
 zaruba please runContainer
 zaruba please removeContainer
-# And push our images
-# zaruba please setKwarg key=dockerRepo::default value=stalchmst
-# zaruba please pushImage
+
+# Setup kubernentes client
+zaruba please setupKubeClient
+
+# Push images
+zaruba please setKwarg key=dockerImagePrefix::default value=stalchmst
+zaruba please pushImage
+
+# Make helm charts
+zaruba please makeHelmCharts
+
+# Create helm deployment values
+zaruba please makeServiceDeployment location=fibo
+zaruba please makeServiceDeployment location=myservice
+
+# Update environment
+zaruba please updateEnv
+
+# Helm apply
+zaruba please helmApply kubeContext=docker-desktop
+
+# Helm destroy
+zaruba please helmDestroy kubeContext=docker-desktop
 ```
 
 Now you should have `rabbitmq`, `fibo`, and `myservice` running. All at once, just like [the three prime evils](https://diablo.fandom.com/wiki/Prime_Evil#The_Three_Brothers).
@@ -97,24 +121,32 @@ Now you should have `rabbitmq`, `fibo`, and `myservice` running. All at once, ju
 
 This repo contains all generated tasks, so you can have a look and see what's going on.
 
-> TODO: provide explanation for every command
+# Setup Ubuntu
 
-# Into Kubernetes
+# Initialize Project
 
-> TODO: This is WIP
+# Import External Repo
 
-```sh
-zaruba please setupKubeClient
-mkdir -p charts
-cd charts
-helm repo add bitnami https://charts.bitnami.com/bitnami
-helm pull bitnami/rabbitmq --untar
-helm pull bitnami/mysql --untar
+# Create FastAPI Service
 
-# build
-helm install -f ../chart-values/rabbitmq.yaml svc-rmq ./rabbitmq
-helm install -f ../chart-values/mysql.yaml svc-mysql ./mysql
+# Create FastAPI Module
 
-helm uninstall svc-rmq
-helm uninstall svc-mysql
-```
+# Create FastAPI CRUD
+
+# Create FastAPI Service Task
+
+# Create Docker Task
+
+# Run Services
+
+# Run Services as Containers
+
+# Setup Kubernentes Client
+
+# Push Images
+
+# Create Helm Charts
+
+# Create Helm Deployment Values
+
+# Deploy Helm
