@@ -31,6 +31,7 @@ zaruba please makeFastCRUD generator.service.location=myservice generator.module
 
 # Create Service Task
 zaruba please makeServiceTask generator.service.location=fibo
+zaruba please makeServiceTask generator.service.location=myservice generator.service.type=fastapi
 
 # Create Docker Task
 zaruba please makeDockerTask generator.docker.image=rabbitmq
@@ -41,6 +42,8 @@ zaruba please run autostop # NOTE: for do.sh, we need to add "autostop" argument
 # Or run services as container (press ctrl + c first)
 zaruba please runContainer autostop # NOTE: for do.sh, we need to add "autostop" argument
 zaruba please removeContainer
+
+# ==== Stop here if you don't want to deploy on kubernetes ====
 
 # Setup kubernentes client
 zaruba please setupKubeClient
@@ -64,3 +67,5 @@ zaruba please helmApply kube.context=docker-desktop
 
 # Helm destroy
 zaruba please helmDestroy kube.context=docker-desktop
+
+rm -Rf ./.git # NOTE: For do.sh only

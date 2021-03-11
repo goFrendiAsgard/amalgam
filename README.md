@@ -51,6 +51,8 @@ You can then enable WSL2 backend (that will be the only option available for win
 
 You can also enable kubernetes as well.
 
+> 📝 __Note:__ You probably don't need to enable kubernetes if you just want to run your services locally.
+
 ![Enable kubernetes](images/docker-desktop-enable-kubernetes.png)
 
 If you have EKS/GKE/AKS, and you don't want to run kubernetes locally, you can skip this step.
@@ -96,6 +98,7 @@ zaruba please makeFastCRUD generator.service.location=myservice generator.module
 
 # Create Service Task
 zaruba please makeServiceTask generator.service.location=fibo
+zaruba please makeServiceTask generator.service.location=myservice generator.service.type=fastapi
 
 # Create Docker Task
 zaruba please makeDockerTask generator.docker.image=rabbitmq
@@ -106,6 +109,8 @@ zaruba please run
 # Or run services as container (press ctrl + c first)
 zaruba please runContainer
 zaruba please removeContainer
+
+# ==== Stop here if you don't want to deploy on kubernetes ====
 
 # Setup kubernentes client
 zaruba please setupKubeClient
@@ -217,31 +222,155 @@ tasks:
 
 ### includes
 
-This section is pretty straight forward. You can include other zaruba script as many as you need. Several useful scripts are available under `${ZARUBA_HOME}/scripts/core.zaruba.yaml`, so you might want to include it on every zaruba script you create.
+This section is pretty straight forward. You can include as many other zaruba script as you need. Several useful scripts are available under `${ZARUBA_HOME}/scripts/core.zaruba.yaml`, so you might want to include it on every zaruba script you create.
 
+### inputs
+
+This section contains possible input for all zaruba tasks. Some tasks might share the same inputs. For example, creating docker container and removing docker container both require `docker.containerName`.
+
+An input might has `default` value and `description`.
+
+### tasks
+
+This section contains task definition. A task might extend or depend on other tasks.
+
+In our example, `runFibo` extend `serveHttp`. It means that `runFibo` is basically `serveHttp` with several configuration overridden.
+
+On the other hand, `run` not only extend `core.runShellScript`, but also depends on `runFibo` and `runRabbitmq`. It means that whenever `run` is executed, `runFibo` and `runRabbitmq` will be executed first.
+
+To execute tasks you can invoke:
+
+```sh
+zaruba please <task-names>
+# or
+zaruba please <task-names> --interactive
+```
+
+> 💡 __TIPS:__ Execute task with `--interactive` flag is probably a good idea if you don't want to remember all the inputs.
 
 ## Import External Repo
 
+```sh
+zaruba please addSubrepo subrepo.url="https://github.com/state-alchemists/fibonacci-clock" subrepo.prefix="fibo"
+zaruba please initSubrepos
+zaruba please pullSubrepos
+```
+
+Suppose you already have some separated repositories, you can merge them into your monorepo by using git subtree.
+
+You can use `zaruba please addSubrepo` to add sub-repository to your project. Once the sub-repositories added, you can then perform `zaruba please initSubrepos`.
+
 ## Create FastAPI Service
+
+```sh
+zaruba please makeFastService generator.service.location=myservice
+```
+
+This will create FastAPI service in `myservice` directory.  
 
 ## Create FastAPI Module
 
+```sh
+zaruba please makeFastModule generator.service.location=myservice generator.module.name=mymodule
+```
+
+A service might have several modules. You can make a FastAPI module in you newly created FastAPI service by executing `makeFastModule` command.
+
+You can also make URL/event handler by using these commands respectively:
+
+```sh
+# Create custom route (optional)
+zaruba please makeFastRoute generator.service.location=myservice generator.module.name=mymodule generator.url=/hello
+# Create event/RPC handler (optional)
+zaruba please makeFastEventHandler generator.service.location=myservice generator.module.name=mymodule generator.event.name=myEvent
+```
+
 ## Create FastAPI CRUD
 
-## Create FastAPI Service Task
+Beside creating URL/event handler, you can also create CRUD handler by invoking this command:
+
+```sh
+zaruba please makeFastCRUD generator.service.location=myservice generator.module.name=mymodule generator.crud.entity=book generator.crud.fields=title,author,synopsis
+```
+
+## Create Service Task
+
+Remember our `fibo` subrepo? To actually run it along with `myservice`, you need to generate service tasks as follow:
+
+```sh
+zaruba please makeServiceTask generator.service.location=fibo
+zaruba please makeServiceTask generator.service.location=myservice generator.service.type=fastapi
+```
 
 ## Create Docker Task
 
+Similar to service task, you can also make docker task in case of you want to run third party container
+
+```sh
+zaruba please makeDockerTask generator.docker.image=rabbitmq
+```
+
 ## Run Services
+
+To run all sevices, you can simply invoke
+
+```sh
+zaruba please run
+```
+
+If you go into detail, you will see that `run` task is depends on `runFibo`, `runMyservice` and `runRabbitmq`.
+
+```sh
+includes:
+- ${ZARUBA_HOME}/scripts/core.zaruba.yaml
+- ./zaruba-tasks/runFibo.zaruba.yaml
+- ./zaruba-tasks/runMyservice.zaruba.yaml
+- ./zaruba-tasks/runRabbitmq.zaruba.yaml
+tasks:
+  run:
+    icon: 🚅
+    description: Run everything at once
+    dependencies:
+    - runFibo
+    - runMyservice
+    - runRabbitmq
+```
+
 
 ## Run Services as Containers
 
+```
+zaruba please runContainer
+```
+
 ## Setup Kubernentes Client
+
+```sh
+zaruba please setupKubeClient
+```
 
 ## Push Images
 
+```sh
+zaruba please setProjectValue variable.name=dockerImagePrefix::default variable.value=stalchmst
+zaruba please pushImage
+```
+
 ## Create Helm Charts
+
+```sh
+zaruba please makeHelmCharts
+```
 
 ## Create Helm Deployment Values
 
+```sh
+zaruba please makeServiceDeployment generator.service.location=fibo
+zaruba please makeServiceDeployment generator.service.location=myservice
+```
+
 ## Deploy Helm
+
+```sh
+zaruba please helmApply kube.context=docker-desktop
+```
