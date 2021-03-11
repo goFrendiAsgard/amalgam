@@ -34,7 +34,7 @@ You are encouraged to have a look at [the installation script](https://raw.githu
 
 ## Update Zaruba
 
-This tutorial was tested by using `zaruba v0.4.2`. To show your current zaruba version, you can invoke `zaruba please showVersion`
+This tutorial was tested by using `zaruba v0.4.3`. To show your current zaruba version, you can invoke `zaruba please showVersion`
 
 ```sh
 zaruba please update
