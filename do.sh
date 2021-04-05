@@ -34,13 +34,13 @@ zaruba please makeServiceTask generator.service.location=fibo
 zaruba please makeServiceTask generator.service.location=myservice generator.service.type=fastapi
 
 # Create Docker Task
-zaruba please makeDockerTask generator.docker.image=rabbitmq
+zaruba please makeDockerTask generator.docker.image.name=rabbitmq
 
 # Run services
-zaruba please run autostop # NOTE: for do.sh, we need to add "autostop" argument
+zaruba please run -t # NOTE: for do.sh, we need to add "-t" argument
 
 # Or run services as container (press ctrl + c first)
-zaruba please runContainer autostop # NOTE: for do.sh, we need to add "autostop" argument
+zaruba please runContainer -t # NOTE: for do.sh, we need to add "-t" argument
 zaruba please removeContainer
 
 # ==== Stop here if you don't want to deploy on kubernetes ====

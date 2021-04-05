@@ -34,7 +34,7 @@ You are encouraged to have a look at [the installation script](https://raw.githu
 
 ## Update Zaruba
 
-This tutorial was tested by using `zaruba v0.4.3`. To show your current zaruba version, you can invoke `zaruba please showVersion`
+This tutorial was tested by using `zaruba v0.5.8`. To show your current zaruba version, you can invoke `zaruba please showVersion`
 
 ```sh
 zaruba please update
@@ -101,7 +101,7 @@ zaruba please makeServiceTask generator.service.location=fibo
 zaruba please makeServiceTask generator.service.location=myservice generator.service.type=fastapi
 
 # Create Docker Task
-zaruba please makeDockerTask generator.docker.image=rabbitmq
+zaruba please makeDockerTask generator.docker.image.name=rabbitmq
 
 # Run services
 zaruba please run
@@ -307,7 +307,7 @@ zaruba please makeServiceTask generator.service.location=myservice generator.ser
 Similar to service task, you can also make docker task in case of you want to run third party container
 
 ```sh
-zaruba please makeDockerTask generator.docker.image=rabbitmq
+zaruba please makeDockerTask generator.docker.image.name=rabbitmq
 ```
 
 ## Run Services
