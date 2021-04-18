@@ -1,0 +1,66 @@
+tasks:
+
+  runFibo:
+    icon: 📜
+    extend: serveHttp
+    location: ../fibo
+    config:
+      start:
+    configRef: fibo
+    envRef: fibo
+    lconfRef: fibo
+
+  runFiboContainer:
+    icon: 🥓
+    extend: core.startDockerContainer
+    dependencies:
+    - buildFiboImage
+    configRef: fiboContainer
+    lconfigRef: fibo
+    envRef: fibo
+
+  stopFiboContainer:
+    icon: 🌭
+    extend: core.stopDockerContainer
+    configRef: fiboContainer
+
+  removeFiboContainer:
+    icon: 🌰
+    extend: core.removeDockerContainer
+    configRef: fiboContainer
+
+  buildFiboImage:
+    icon: 🍖
+    extend: core.buildDockerImage
+    location: ../fibo
+    timeout: 1h
+    configRef: fiboContainer
+
+  pushFiboImage:
+    icon: 🍗
+    extend: core.pushDockerImage
+    dependencies:
+    - buildFiboImage
+    timeout: 1h
+    configRef: fiboContainer
+
+configs:
+
+  fibo: {}
+  fiboContainer:
+    containerName: fibo
+    imageName: fibo
+    expose: lconfig.ports
+
+lconfigs:
+
+  fibo:
+    ports:
+    - '{{ .GetEnv "HTTP_PORT" }}'
+
+envs:
+
+  fibo:
+    HTTP_PORT:
+      from: FIBO_HTTP_PORT
+      default: '8080'

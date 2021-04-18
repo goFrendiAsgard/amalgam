@@ -1,0 +1,120 @@
+tasks:
+
+  prepareMyService:
+    icon: 🐍
+    extend: core.runShellScript
+    location: ../myService
+    timeout: 1h
+    envRef: myService
+    configRef: myService
+    config:
+      start: pipenv sync
+    lconfigRef: myService
+
+  testMyService:
+    icon: 🐍
+    extend: core.runShellScript
+    location: ../myService
+    dependencies:
+    - prepareMyService
+    timeout: 1h
+    envRef: myService
+    configRef: myService
+    config:
+      start: pipenv run pytest -rP -v --cov="$(pwd)" --cov-report html
+    lconfigRef: myService
+
+  runMyService:
+    icon: 🐍
+    extend: core.startService
+    location: ../myService
+    dependencies:
+    - prepareMyService
+    config:
+      start: |
+        pipenv run uvicorn main:app --reload --port={{ if .GetEnv "ZARUBA_ENV_PREFIX_HTTP_PORT" }}{{ .GetEnv "ZARUBA_ENV_PREFIX_HTTP_PORT" }}{{ else if .GetEnv "HTTP_PORT" }}{{ .GetEnv "HTTP_PORT" }}{{ else }}3000{{ end }}
+    configRef: myService
+    envRef: myService
+    lconfRef: myService
+
+  runMyServiceContainer:
+    icon: 🍲
+    extend: core.startDockerContainer
+    dependencies:
+    - buildMyServiceImage
+    configRef: myServiceContainer
+    lconfigRef: myService
+    envRef: myService
+
+  stopMyServiceContainer:
+    icon: 🥐
+    extend: core.stopDockerContainer
+    configRef: myServiceContainer
+
+  removeMyServiceContainer:
+    icon: 🍟
+    extend: core.removeDockerContainer
+    configRef: myServiceContainer
+
+  buildMyServiceImage:
+    icon: 🌯
+    extend: core.buildDockerImage
+    location: ../myService
+    timeout: 1h
+    configRef: myServiceContainer
+
+  pushMyServiceImage:
+    icon: 🌮
+    extend: core.pushDockerImage
+    dependencies:
+    - buildMyServiceImage
+    timeout: 1h
+    configRef: myServiceContainer
+
+configs:
+
+  myService: {}
+  myServiceContainer:
+    containerName: myService
+    imageName: myservice
+    expose: lconfig.ports
+
+lconfigs:
+
+  myService:
+    ports:
+    - '{{ .GetEnv "MY_SERVICE_HTTP_PORT" }}'
+
+envs:
+
+  myService:
+    PIPENV_DONT_LOAD_ENV:
+      from: MY_SERVICE_PIPENV_DONT_LOAD_ENV
+      default: 1
+    MY_SERVICE_HTTP_PORT:
+      from: MY_SERVICE_MY_SERVICE_HTTP_PORT
+      default: '3000'
+    MY_SERVICE_MESSAGE_BUS_TYPE:
+      from: MY_SERVICE_MY_SERVICE_MESSAGE_BUS_TYPE
+      default: local
+    MY_SERVICE_RABBITMQ_HOST:
+      from: MY_SERVICE_MY_SERVICE_RABBITMQ_HOST
+      default: localhost
+    MY_SERVICE_RABBITMQ_USER:
+      from: MY_SERVICE_MY_SERVICE_RABBITMQ_USER
+      default: root
+    MY_SERVICE_RABBITMQ_PASS:
+      from: MY_SERVICE_MY_SERVICE_RABBITMQ_PASS
+      default: toor
+    MY_SERVICE_RABBITMQ_VHOST:
+      from: MY_SERVICE_MY_SERVICE_RABBITMQ_VHOST
+      default: /
+    MY_SERVICE_SQLALCHEMY_DATABASE_URL:
+      from: MY_SERVICE_MY_SERVICE_SQLALCHEMY_DATABASE_URL
+      default: sqlite:///./database.db
+    MY_SERVICE_ENABLE_ROUTE_HANDLER:
+      from: MY_SERVICE_MY_SERVICE_ENABLE_ROUTE_HANDLER
+      default: '1'
+    MY_SERVICE_ENABLE_EVENT_HANDLER:
+      from: MY_SERVICE_MY_SERVICE_ENABLE_EVENT_HANDLER
+      default: '1'

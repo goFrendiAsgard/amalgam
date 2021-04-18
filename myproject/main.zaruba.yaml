@@ -1,0 +1,52 @@
+includes:
+
+- ${ZARUBA_HOME}/scripts/core.zaruba.yaml
+- zaruba-tasks/fibo.zaruba.yaml
+- zaruba-tasks/myService.zaruba.yaml
+- zaruba-tasks/myRmq.zaruba.yaml
+
+tasks:
+
+  run:
+    dependencies:
+    - runFibo
+    - runMyService
+    - runMyRmq
+
+  runContainer:
+    dependencies:
+    - runFiboContainer
+    - runMyServiceContainer
+    - runMyRmq
+
+  stopContainer:
+    dependencies:
+    - stopFiboContainer
+    - stopMyServiceContainer
+    - stopMyRmqContainer
+
+  removeContainer:
+    dependencies:
+    - removeFiboContainer
+    - removeMyServiceContainer
+    - removeMyRmqContainer
+
+  buildImage:
+    dependencies:
+    - buildFiboImage
+    - buildMyServiceImage
+
+  pushImage:
+    dependencies:
+    - pushFiboImage
+    - pushMyServiceImage
+
+  helmApply:
+    icon: 🥓
+    extend: core.helmApply
+    location: helm-deployments
+
+  helmDestroy:
+    icon: 🥜
+    extend: core.helmDestroy
+    location: helm-deployments

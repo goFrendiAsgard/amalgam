@@ -1,0 +1,15 @@
+app:
+
+  name: fibo
+  group: db
+  container:
+    imagePrefix: '{{ .Values | get "commonImagePrefix" "local" }}'
+    imageTag: '{{ .Values | get "commonImagePrefix" "latest" }}'
+    image: fibo
+    env:
+    - name: HTTP_PORT
+      value: '8080'
+
+  ports:
+  - containerPort: '8080'
+    servicePort: '8080'

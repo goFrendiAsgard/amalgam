@@ -1,0 +1,53 @@
+tasks:
+
+  runMyRmq:
+    icon: 🐇
+    extend: core.startDockerContainer
+    timeout: 1h
+    config:
+      afterCheck: |
+        set +e
+        docker exec "$CONTAINER_NAME" rabbitmqctl await_startup
+        until [ "$?" = "0" ]
+        do
+          docker exec "$CONTAINER_NAME" rabbitmqctl await_startup
+          sleep 3
+        done
+    configRef: myRmq
+    envRef: myRmq
+    lconfRef: myRmq
+
+  stopMyRmqContainer:
+    icon: 🧀
+    extend: core.stopDockerContainer
+    configRef: myRmq
+
+  removeMyRmqContainer:
+    icon: 🌭
+    extend: core.removeDockerContainer
+    configRef: myRmq
+
+configs:
+
+  myRmq:
+    useImagePrefix: false
+    imageName: rabbitmq
+    imageTag: 3-management
+    containerName: myRmq
+    port::5672: 5672
+    port::15672: 15672
+    expose: config.port
+
+envs:
+
+  myRmq:
+    RABBITMQ_DEFAULT_USER:
+      from: RABITMQ_DEFAULT_USER
+      default: root
+    RABBITMQ_DEFAULT_PASS:
+      from: RABITMQ_DEFAULT_PASS
+      default: toor
+
+lconfigs:
+
+  myRmq: {}
