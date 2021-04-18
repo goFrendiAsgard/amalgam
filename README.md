@@ -34,7 +34,7 @@ You are encouraged to have a look at [the installation script](https://raw.githu
 
 ## Update Zaruba
 
-This tutorial was tested by using `zaruba v0.5.8`. To show your current zaruba version, you can invoke `zaruba please showVersion`
+This tutorial was tested by using `zaruba v0.6.0`. To show your current zaruba version, you can invoke `zaruba please showVersion`
 
 ```sh
 zaruba please update
@@ -85,23 +85,23 @@ zaruba please initSubrepos
 zaruba please pullSubrepos
 
 # Create FastAPI Service
-zaruba please makeFastService generator.service.location=myservice
+zaruba please makeFastService generator.service.location=myService
 # Create module
-zaruba please makeFastModule generator.service.location=myservice generator.module.name=mymodule
+zaruba please makeFastModule generator.service.location=myService generator.module.name=mymodule
 # Create custom route (optional)
-zaruba please makeFastRoute generator.service.location=myservice generator.module.name=mymodule generator.url=/hello
+zaruba please makeFastRoute generator.service.location=myService generator.module.name=mymodule generator.url=/hello
 # Create event/RPC handler (optional)
-zaruba please makeFastEventHandler generator.service.location=myservice generator.module.name=mymodule generator.event.name=myEvent
-zaruba please makeFastRPCHandler generator.service.location=myservice generator.module.name=mymodule generator.event.name=myRPC
+zaruba please makeFastEventHandler generator.service.location=myService generator.module.name=mymodule generator.event.name=myEvent
+zaruba please makeFastRPCHandler generator.service.location=myService generator.module.name=mymodule generator.event.name=myRPC
 # Create CRUD
-zaruba please makeFastCRUD generator.service.location=myservice generator.module.name=mymodule generator.crud.entity=book generator.crud.fields=title,author,synopsis
+zaruba please makeFastCRUD generator.service.location=myService generator.module.name=mymodule generator.crud.entity=book generator.crud.fields=title,author,synopsis
 
 # Create Service Task
-zaruba please makeServiceTask generator.service.location=fibo
-zaruba please makeServiceTask generator.service.location=myservice generator.service.type=fastapi
+zaruba please makeStaticServiceTask generator.service.location=fibo
+zaruba please makeFastApiServiceTask generator.service.location=myService
 
 # Create Docker Task
-zaruba please makeDockerTask generator.docker.image.name=rabbitmq
+zaruba please makeRabbitmqDockerTask generator.docker.container.name=myRmq
 
 # Run services
 zaruba please run
@@ -120,11 +120,11 @@ zaruba please setProjectValue variable.name=dockerImagePrefix::default variable.
 zaruba please pushImage
 
 # Make helm charts
-zaruba please makeHelmCharts
+zaruba please initHelm
 
 # Create helm deployment values
-zaruba please makeServiceDeployment generator.service.location=fibo
-zaruba please makeServiceDeployment generator.service.location=myservice
+zaruba please makeHelmDeployment generator.service.name=fibo
+zaruba please makeHelmDeployment generator.service.name=myService
 
 # Update environment
 zaruba please updateEnv
