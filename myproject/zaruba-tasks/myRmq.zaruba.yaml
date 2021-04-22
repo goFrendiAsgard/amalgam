@@ -18,12 +18,12 @@ tasks:
     lconfRef: myRmq
 
   stopMyRmqContainer:
-    icon: 🧀
+    icon: 🌯
     extend: core.stopDockerContainer
     configRef: myRmq
 
   removeMyRmqContainer:
-    icon: 🌭
+    icon: 🥓
     extend: core.removeDockerContainer
     configRef: myRmq
 

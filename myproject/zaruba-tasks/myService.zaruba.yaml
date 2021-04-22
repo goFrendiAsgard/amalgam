@@ -32,13 +32,13 @@ tasks:
     - prepareMyService
     config:
       start: |
-        pipenv run uvicorn main:app --reload --port={{ if .GetEnv "ZARUBA_ENV_PREFIX_HTTP_PORT" }}{{ .GetEnv "ZARUBA_ENV_PREFIX_HTTP_PORT" }}{{ else if .GetEnv "HTTP_PORT" }}{{ .GetEnv "HTTP_PORT" }}{{ else }}3000{{ end }}
+        pipenv run uvicorn main:app --reload --port={{ if .GetEnv "MY_SERVICE_HTTP_PORT" }}{{ .GetEnv "MY_SERVICE_HTTP_PORT" }}{{ else if .GetEnv "HTTP_PORT" }}{{ .GetEnv "HTTP_PORT" }}{{ else }}3000{{ end }}
     configRef: myService
     envRef: myService
     lconfRef: myService
 
   runMyServiceContainer:
-    icon: 🍲
+    icon: 🧀
     extend: core.startDockerContainer
     dependencies:
     - buildMyServiceImage
@@ -47,24 +47,24 @@ tasks:
     envRef: myService
 
   stopMyServiceContainer:
-    icon: 🥐
+    icon: 🍕
     extend: core.stopDockerContainer
     configRef: myServiceContainer
 
   removeMyServiceContainer:
-    icon: 🍟
+    icon: 🍔
     extend: core.removeDockerContainer
     configRef: myServiceContainer
 
   buildMyServiceImage:
-    icon: 🌯
+    icon: 🍄
     extend: core.buildDockerImage
     location: ../myService
     timeout: 1h
     configRef: myServiceContainer
 
   pushMyServiceImage:
-    icon: 🌮
+    icon: 🥖
     extend: core.pushDockerImage
     dependencies:
     - buildMyServiceImage
@@ -78,6 +78,7 @@ configs:
     containerName: myService
     imageName: myservice
     expose: lconfig.ports
+    localhost: host.docker.internal
 
 lconfigs:
 
@@ -92,29 +93,29 @@ envs:
       from: MY_SERVICE_PIPENV_DONT_LOAD_ENV
       default: 1
     MY_SERVICE_HTTP_PORT:
-      from: MY_SERVICE_MY_SERVICE_HTTP_PORT
+      from: MY_SERVICE_HTTP_PORT
       default: '3000'
     MY_SERVICE_MESSAGE_BUS_TYPE:
-      from: MY_SERVICE_MY_SERVICE_MESSAGE_BUS_TYPE
+      from: MY_SERVICE_MESSAGE_BUS_TYPE
       default: local
     MY_SERVICE_RABBITMQ_HOST:
-      from: MY_SERVICE_MY_SERVICE_RABBITMQ_HOST
+      from: MY_SERVICE_RABBITMQ_HOST
       default: localhost
     MY_SERVICE_RABBITMQ_USER:
-      from: MY_SERVICE_MY_SERVICE_RABBITMQ_USER
+      from: MY_SERVICE_RABBITMQ_USER
       default: root
     MY_SERVICE_RABBITMQ_PASS:
-      from: MY_SERVICE_MY_SERVICE_RABBITMQ_PASS
+      from: MY_SERVICE_RABBITMQ_PASS
       default: toor
     MY_SERVICE_RABBITMQ_VHOST:
-      from: MY_SERVICE_MY_SERVICE_RABBITMQ_VHOST
+      from: MY_SERVICE_RABBITMQ_VHOST
       default: /
     MY_SERVICE_SQLALCHEMY_DATABASE_URL:
-      from: MY_SERVICE_MY_SERVICE_SQLALCHEMY_DATABASE_URL
+      from: MY_SERVICE_SQLALCHEMY_DATABASE_URL
       default: sqlite:///./database.db
     MY_SERVICE_ENABLE_ROUTE_HANDLER:
-      from: MY_SERVICE_MY_SERVICE_ENABLE_ROUTE_HANDLER
+      from: MY_SERVICE_ENABLE_ROUTE_HANDLER
       default: '1'
     MY_SERVICE_ENABLE_EVENT_HANDLER:
-      from: MY_SERVICE_MY_SERVICE_ENABLE_EVENT_HANDLER
+      from: MY_SERVICE_ENABLE_EVENT_HANDLER
       default: '1'

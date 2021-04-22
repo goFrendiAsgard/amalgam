@@ -8,45 +8,51 @@ includes:
 tasks:
 
   run:
+    icon: 🍿
     dependencies:
     - runFibo
     - runMyService
     - runMyRmq
 
   runContainer:
+    icon: 🍲
     dependencies:
     - runFiboContainer
     - runMyServiceContainer
     - runMyRmq
 
   stopContainer:
+    icon: 🍕
     dependencies:
     - stopFiboContainer
     - stopMyServiceContainer
     - stopMyRmqContainer
 
   removeContainer:
+    icon: 🥐
     dependencies:
     - removeFiboContainer
     - removeMyServiceContainer
     - removeMyRmqContainer
 
   buildImage:
+    icon: 🥞
     dependencies:
     - buildFiboImage
     - buildMyServiceImage
 
   pushImage:
+    icon: 🥓
     dependencies:
     - pushFiboImage
     - pushMyServiceImage
 
   helmApply:
-    icon: 🥓
+    icon: 🍄
     extend: core.helmApply
     location: helm-deployments
 
   helmDestroy:
-    icon: 🥜
+    icon: 🥓
     extend: core.helmDestroy
     location: helm-deployments
