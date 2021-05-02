@@ -1,11 +1,11 @@
 app:
 
-  name: myservice
+  name: my-service
   group: db
   container:
     imagePrefix: '{{ .Values | get "commonImagePrefix" "local" }}'
     imageTag: '{{ .Values | get "commonImagePrefix" "latest" }}'
-    image: myservice
+    image: my-service
     env:
     - name: PYTHONUNBUFFERED
       value: 1

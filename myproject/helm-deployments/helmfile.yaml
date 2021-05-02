@@ -38,7 +38,7 @@ releases:
   values:
   - ./values/fibo.yaml.gotmpl
 
-- name: myservice
+- name: my-service
   chart: ./charts/app
   values:
-  - ./values/myService.yaml.gotmpl
+  - ./values/my-service.yaml.gotmpl

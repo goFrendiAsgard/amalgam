@@ -30,12 +30,12 @@ tasks:
         docker exec {{ .GetConfig "containerName" }} rabbitmqctl start_app
 
   stopMyRmqContainer:
-    icon: 🍟
+    icon: 🌰
     extend: core.stopDockerContainer
     configRef: myRmq
 
   removeMyRmqContainer:
-    icon: 🥐
+    icon: 🍕
     extend: core.removeDockerContainer
     configRef: myRmq
 
