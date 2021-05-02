@@ -8,7 +8,7 @@ tasks:
     envRef: myService
     configRef: myService
     config:
-      start: pipenv sync
+      start: pipenv install
     lconfigRef: myService
 
   testMyService:
@@ -32,13 +32,13 @@ tasks:
     - prepareMyService
     config:
       start: |
-        pipenv run uvicorn main:app --reload --port={{ if .GetEnv "MY_SERVICE_HTTP_PORT" }}{{ .GetEnv "MY_SERVICE_HTTP_PORT" }}{{ else if .GetEnv "HTTP_PORT" }}{{ .GetEnv "HTTP_PORT" }}{{ else }}3000{{ end }}
+        pipenv run uvicorn main:app --reload --port={{ .GetConfig "fastApiPort" }}
     configRef: myService
     envRef: myService
     lconfRef: myService
 
   runMyServiceContainer:
-    icon: 🧀
+    icon: 🌮
     extend: core.startDockerContainer
     dependencies:
     - buildMyServiceImage
@@ -47,24 +47,24 @@ tasks:
     envRef: myService
 
   stopMyServiceContainer:
-    icon: 🍕
+    icon: 🌮
     extend: core.stopDockerContainer
     configRef: myServiceContainer
 
   removeMyServiceContainer:
-    icon: 🍔
+    icon: 🌯
     extend: core.removeDockerContainer
     configRef: myServiceContainer
 
   buildMyServiceImage:
-    icon: 🍄
+    icon: 🧀
     extend: core.buildDockerImage
     location: ../myService
     timeout: 1h
     configRef: myServiceContainer
 
   pushMyServiceImage:
-    icon: 🥖
+    icon: 🍞
     extend: core.pushDockerImage
     dependencies:
     - buildMyServiceImage
@@ -73,7 +73,11 @@ tasks:
 
 configs:
 
-  myService: {}
+  myService:
+    fastApiPort: '{{ if .GetEnv "MY_SERVICE_HTTP_PORT" }}{{ .GetEnv "MY_SERVICE_HTTP_PORT"
+      }}{{ else if .GetEnv "HTTP_PORT" }}{{ .GetEnv "HTTP_PORT" }}{{ else }}3000{{
+      end }}'
+
   myServiceContainer:
     containerName: myService
     imageName: myservice
@@ -89,6 +93,9 @@ lconfigs:
 envs:
 
   myService:
+    PYTHONUNBUFFERED:
+      from: PYTHONUNBUFFERED
+      default: 1
     PIPENV_DONT_LOAD_ENV:
       from: MY_SERVICE_PIPENV_DONT_LOAD_ENV
       default: 1
@@ -112,7 +119,7 @@ envs:
       default: /
     MY_SERVICE_SQLALCHEMY_DATABASE_URL:
       from: MY_SERVICE_SQLALCHEMY_DATABASE_URL
-      default: sqlite:///./database.db
+      default: sqlite://
     MY_SERVICE_ENABLE_ROUTE_HANDLER:
       from: MY_SERVICE_ENABLE_ROUTE_HANDLER
       default: '1'

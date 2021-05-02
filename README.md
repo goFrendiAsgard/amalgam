@@ -85,16 +85,16 @@ zaruba please initSubrepos
 zaruba please pullSubrepos
 
 # Create FastAPI Service
-zaruba please makeFastService generator.service.location=myService
+zaruba please makeFastApiService generator.fastApi.service.name=myService
 # Create module
-zaruba please makeFastModule generator.service.location=myService generator.module.name=mymodule
+zaruba please makeFastApiModule generator.fastApi.service.name=myService generator.fastApi.module.name=myModule
 # Create custom route (optional)
-zaruba please makeFastRoute generator.service.location=myService generator.module.name=mymodule generator.url=/hello
+zaruba please makeFastApiRoute generator.fastApi.service.name=myService generator.fastApi.module.name=myModule generator.fastApi.url=/hello
 # Create event/RPC handler (optional)
-zaruba please makeFastEventHandler generator.service.location=myService generator.module.name=mymodule generator.event.name=myEvent
-zaruba please makeFastRPCHandler generator.service.location=myService generator.module.name=mymodule generator.event.name=myRPC
+zaruba please makeFastApiEventHandler generator.fastApi.service.name=myService generator.fastApi.module.name=myModule generator.fastApi.event.name=myEvent
+zaruba please makeFastApiRpcHandler generator.fastApi.service.name=myService generator.fastApi.module.name=myModule generator.fastApi.rpc.name=myRPC
 # Create CRUD
-zaruba please makeFastCRUD generator.service.location=myService generator.module.name=mymodule generator.crud.entity=book generator.crud.fields=title,author,synopsis
+zaruba please makeFastApiCrud generator.fastApi.service.name=myService generator.fastApi.module.name=myModule generator.fastApi.crud.entity=book generator.fastApi.crud.fields=title,author,synopsis
 
 # Create Service Task
 zaruba please makeStaticServiceTask generator.service.location=fibo

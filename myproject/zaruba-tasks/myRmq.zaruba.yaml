@@ -7,23 +7,35 @@ tasks:
     config:
       afterCheck: |
         set +e
-        docker exec "$CONTAINER_NAME" rabbitmqctl await_startup
+        docker exec "${CONTAINER_NAME}" rabbitmqctl await_startup
         until [ "$?" = "0" ]
         do
-          docker exec "$CONTAINER_NAME" rabbitmqctl await_startup
+          docker exec "${CONTAINER_NAME}" rabbitmqctl await_startup
           sleep 3
         done
     configRef: myRmq
     envRef: myRmq
     lconfRef: myRmq
 
+  resetMyRmq:
+    icon: 🐇
+    extend: core.runShellScript
+    dependencies:
+    - runMyRmq
+    configRef: myRmq
+    config:
+      start: |
+        docker exec {{ .GetConfig "containerName" }} rabbitmqctl stop_app
+        docker exec {{ .GetConfig "containerName" }} rabbitmqctl reset
+        docker exec {{ .GetConfig "containerName" }} rabbitmqctl start_app
+
   stopMyRmqContainer:
-    icon: 🌯
+    icon: 🍟
     extend: core.stopDockerContainer
     configRef: myRmq
 
   removeMyRmqContainer:
-    icon: 🥓
+    icon: 🥐
     extend: core.removeDockerContainer
     configRef: myRmq
 

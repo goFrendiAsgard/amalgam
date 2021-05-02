@@ -11,7 +11,7 @@ tasks:
     lconfRef: fibo
 
   runFiboContainer:
-    icon: 🥜
+    icon: 🌯
     extend: core.startDockerContainer
     dependencies:
     - buildFiboImage
@@ -20,24 +20,24 @@ tasks:
     envRef: fibo
 
   stopFiboContainer:
-    icon: 🌭
+    icon: 🍞
     extend: core.stopDockerContainer
     configRef: fiboContainer
 
   removeFiboContainer:
-    icon: 🍗
+    icon: 🥙
     extend: core.removeDockerContainer
     configRef: fiboContainer
 
   buildFiboImage:
-    icon: 🍿
+    icon: 🍲
     extend: core.buildDockerImage
     location: ../fibo
     timeout: 1h
     configRef: fiboContainer
 
   pushFiboImage:
-    icon: 🥞
+    icon: 🥓
     extend: core.pushDockerImage
     dependencies:
     - buildFiboImage

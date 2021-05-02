@@ -1,45 +1,35 @@
-from typing import Mapping
 from fastapi import FastAPI
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+from helpers.transport import MessageBus, RMQMessageBus, RMQEventMap, LocalMessageBus
+from myModule.controller import Controller as MyModuleController
+from repos.dbBook import DBBookRepo
+
 
 import os
-import transport
-import mymodule
 
-# Handle app shutdown event
-def handle_shutdown(app: FastAPI, mb: transport.MessageBus):
-    @app.on_event('shutdown')
-    def on_shutdown():
-        mb.shutdown()
+def create_message_bus(mb_type: str) -> MessageBus:
+    if mb_type == 'rmq':
+        rmq_host = os.getenv('MY_SERVICE_RABBITMQ_HOST', 'localhost')
+        rmq_user = os.getenv('MY_SERVICE_RABBITMQ_USER', 'root')
+        rmq_pass = os.getenv('MY_SERVICE_RABBITMQ_PASS', 'toor')
+        rmq_vhost = os.getenv('MY_SERVICE_RABBITMQ_VHOST', '/')
+        rmq_event_map = RMQEventMap({})
+        return RMQMessageBus(rmq_host, rmq_user, rmq_pass, rmq_vhost, rmq_event_map)
+    return LocalMessageBus()
 
-# init application component
-config: Mapping[str, str] = {
-    'message_bus_type': os.getenv('MY_SERVICE_MESSAGE_BUS_TYPE', 'local'),
-    'rabbitmq_host' : os.getenv('MY_SERVICE_RABBITMQ_HOST', 'localhost'),
-    'rabbitmq_user' : os.getenv('MY_SERVICE_RABBITMQ_USER', 'root'),
-    'rabbitmq_pass' : os.getenv('MY_SERVICE_RABBITMQ_PASS', 'toor'),
-    'rabbitmq_vhost' : os.getenv('MY_SERVICE_RABBITMQ_VHOST', '/'),
-    'sqlalchemy_database_url': os.getenv('MY_SERVICE_SQLALCHEMY_DATABASE_URL', 'sqlite:///./database.db'),
-    'enable_route_handler': os.getenv('MY_SERVICE_ENABLE_ROUTE_HANDLER', '1'),
-    'enable_event_handler': os.getenv('MY_SERVICE_ENABLE_EVENT_HANDLER', '1'),
-}
-enable_route_handler: bool = config.get('enable_route_handler') != '0'
-enable_event_handler: bool = config.get('enable_event_handler') != '0'
+db_url = os.getenv('MY_SERVICE_SQLALCHEMY_DATABASE_URL', 'sqlite://')
+mb_type = os.getenv('MY_SERVICE_MESSAGE_BUS_TYPE', 'local')
+enable_route = os.getenv('MY_SERVICE_ENABLE_ROUTE_HANDLER', '1') != '0'
+enable_event = os.getenv('MY_SERVICE_ENABLE_EVENT_HANDLER', '1') != '0'
+
+engine = create_engine(db_url, echo=True)
 app = FastAPI()
-mb: transport.MessageBus = transport.init_mb(config)
-engine = create_engine(
-    config.get('sqlalchemy_database_url', 'sqlite:///./database.db'),
-    connect_args={'check_same_thread': False}
-)
-DBSession = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-handle_shutdown(app, mb)
+mb = create_message_bus(mb_type)
 
+@app.on_event('shutdown')
+def on_shutdown():
+    mb.shutdown()
 
-# init mymodule
-mymodule.model.Base.metadata.create_all(bind=engine)
-if enable_event_handler:
-    mymodule.event.init(mb, DBSession)
-if enable_route_handler:
-    mymodule.route.init(app, mb)
-
+book_repo = DBBookRepo(engine=engine, create_all=True)
+my_module_controller = MyModuleController(app=app, mb=mb, enable_route=enable_route, enable_event=enable_event, book_repo=book_repo)
+my_module_controller.start()
