@@ -38,7 +38,7 @@ tasks:
     lconfRef: myService
 
   runMyServiceContainer:
-    icon: 🍿
+    icon: 🍲
     extend: core.startDockerContainer
     dependencies:
     - buildMyServiceImage
@@ -52,7 +52,7 @@ tasks:
     configRef: myServiceContainer
 
   removeMyServiceContainer:
-    icon: 🥐
+    icon: 🍄
     extend: core.removeDockerContainer
     configRef: myServiceContainer
 
@@ -64,7 +64,7 @@ tasks:
     configRef: myServiceContainer
 
   pushMyServiceImage:
-    icon: 🥐
+    icon: 🥙
     extend: core.pushDockerImage
     dependencies:
     - buildMyServiceImage

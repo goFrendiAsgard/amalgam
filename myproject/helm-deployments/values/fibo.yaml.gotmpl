@@ -4,7 +4,7 @@ app:
   group: db
   container:
     imagePrefix: '{{ .Values | get "commonImagePrefix" "local" }}'
-    imageTag: '{{ .Values | get "commonImagePrefix" "latest" }}'
+    imageTag: '{{ .Values | get "commonImageTag" "latest" }}'
     image: fibo
     env:
     - name: HTTP_PORT
