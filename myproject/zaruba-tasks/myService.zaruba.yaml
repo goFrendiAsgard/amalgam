@@ -38,7 +38,7 @@ tasks:
     lconfRef: myService
 
   runMyServiceContainer:
-    icon: 🍲
+    icon: 🌯
     extend: core.startDockerContainer
     dependencies:
     - buildMyServiceImage
@@ -47,27 +47,31 @@ tasks:
     envRef: myService
 
   stopMyServiceContainer:
-    icon: 🥐
+    icon: 🍕
     extend: core.stopDockerContainer
     configRef: myServiceContainer
 
   removeMyServiceContainer:
-    icon: 🍄
+    icon: 🥜
     extend: core.removeDockerContainer
     configRef: myServiceContainer
 
   buildMyServiceImage:
-    icon: 🥗
+    icon: 🌮
     extend: core.buildDockerImage
     location: ../myService
+    inputs:
+    - docker.env
     timeout: 1h
     configRef: myServiceContainer
 
   pushMyServiceImage:
-    icon: 🥙
+    icon: 🥜
     extend: core.pushDockerImage
     dependencies:
     - buildMyServiceImage
+    inputs:
+    - docker.env
     timeout: 1h
     configRef: myServiceContainer
 

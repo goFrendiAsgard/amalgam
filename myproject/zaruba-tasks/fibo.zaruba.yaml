@@ -25,22 +25,26 @@ tasks:
     configRef: fiboContainer
 
   removeFiboContainer:
-    icon: 🥙
+    icon: 🍲
     extend: core.removeDockerContainer
     configRef: fiboContainer
 
   buildFiboImage:
-    icon: 🍖
+    icon: 🍞
     extend: core.buildDockerImage
     location: ../fibo
+    inputs:
+    - docker.env
     timeout: 1h
     configRef: fiboContainer
 
   pushFiboImage:
-    icon: 🍿
+    icon: 🍞
     extend: core.pushDockerImage
     dependencies:
     - buildFiboImage
+    inputs:
+    - docker.env
     timeout: 1h
     configRef: fiboContainer
 

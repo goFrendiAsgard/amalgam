@@ -3,6 +3,8 @@ from helpers.transport import MessageBus
 from fastapi import FastAPI, HTTPException
 from schemas.book import Book, BookData
 
+import traceback
+
 def handle_route(app: FastAPI, mb: MessageBus):
 
     @app.get('/book/', response_model=List[Book])
